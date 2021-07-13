@@ -21,7 +21,6 @@ export async function queryBatch(oauth2Client: OAuth2Client) {
           query: process.env.QUERY,
           useLegacySql: false,
           priority: "BATCH",
-          flattenResults: true,
         },
       },
     },
