@@ -1,7 +1,5 @@
 import { google } from "googleapis";
 
-require("dotenv").config();
-
 const scopes = [
   "openid",
   "https://www.googleapis.com/auth/userinfo.email",

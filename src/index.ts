@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import express from "express";
 import { oauth2Client, authUrl } from "./oauth2";
 import { queryBatch } from "./bigquery";

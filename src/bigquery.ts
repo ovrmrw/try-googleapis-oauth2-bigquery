@@ -1,6 +1,7 @@
 import type { OAuth2Client } from "google-auth-library";
 
 import { google } from "googleapis";
+import { BigQuery } from "@google-cloud/bigquery";
 
 const bigquery = google.bigquery("v2");
 
@@ -20,6 +21,7 @@ export async function queryBatch(oauth2Client: OAuth2Client) {
           query: process.env.QUERY,
           useLegacySql: false,
           priority: "BATCH",
+          flattenResults: true,
         },
       },
     },
@@ -38,7 +40,8 @@ export async function queryBatch(oauth2Client: OAuth2Client) {
     }
   }
 
-  const result = await google.bigquery("v2").jobs.getQueryResults({ ...config, jobId: res.data.jobReference.jobId });
+  const result = await bigquery.jobs.getQueryResults({ ...config, jobId: res.data.jobReference.jobId });
   console.log(result);
-  return { schema: result.data.schema, rows: result.data.rows };
+  const rows = BigQuery.mergeSchemaWithRows_(result.data.schema, result.data.rows, false);
+  return { schema: result.data.schema, rows };
 }
