@@ -10,14 +10,23 @@ const scopes = [
   "https://www.googleapis.com/auth/drive",
 ];
 
-export const oauth2Client = new google.auth.OAuth2(
-  process.env.CLIENT_ID,
-  process.env.CLIENT_SECRET,
-  process.env.REDIRECT_URL
-);
+const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URL);
 
-export const authUrl = oauth2Client.generateAuthUrl({
+export function getOAuth2Client() {
+  return new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URL);
+}
+
+export const authUrl = getOAuth2Client().generateAuthUrl({
   access_type: "offline",
   scope: scopes,
   prompt: "consent",
 });
+
+export function generateOAuth2AuthUrl(redirectUrl: string) {
+  return getOAuth2Client().generateAuthUrl({
+    state: JSON.stringify({ redirectUrl }),
+    access_type: "offline",
+    scope: scopes,
+    prompt: "consent",
+  });
+}

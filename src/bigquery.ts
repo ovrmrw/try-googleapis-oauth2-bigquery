@@ -2,14 +2,16 @@ import type { OAuth2Client } from "google-auth-library";
 
 import { google } from "googleapis";
 import { BigQuery } from "@google-cloud/bigquery";
+import { getOAuth2Client } from "./oauth2";
 
 const bigquery = google.bigquery("v2");
 
-export async function queryBatch(oauth2Client: OAuth2Client) {
-  const { email } = await oauth2Client.getTokenInfo(oauth2Client.credentials.access_token);
+export async function queryBatch(accessToken: string, query: string) {
+  const { email } = await getOAuth2Client().getTokenInfo(accessToken);
   const config = {
     projectId: process.env.PROJECT_ID,
-    auth: oauth2Client,
+    // auth: oauth2Client,
+    oauth_token: accessToken,
     quotaUser: email,
   };
 
@@ -18,7 +20,7 @@ export async function queryBatch(oauth2Client: OAuth2Client) {
     requestBody: {
       configuration: {
         query: {
-          query: process.env.QUERY,
+          query: query || process.env.QUERY,
           useLegacySql: false,
           priority: "BATCH",
         },
